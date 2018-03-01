@@ -3,6 +3,7 @@
 # compiled output
 /dist
 /dist-server
+/api/dist
 /tmp
 /out-tsc
 
@@ -17,6 +18,8 @@
 *.launch
 .settings/
 *.sublime-workspace
+.ghci
+*.log
 
 # IDE - VSCode
 .vscode/*
