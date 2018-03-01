@@ -18,7 +18,6 @@
 *.launch
 .settings/
 *.sublime-workspace
-.ghci
 *.log
 
 # IDE - VSCode
