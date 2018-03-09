@@ -4,18 +4,20 @@ import { HttpClientModule } from '@angular/common/http';
 
 
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './auth/auth.service';
 import { HomeComponent } from './home/home.component';
 import { CallbackComponent } from './callback/callback.component';
 import { AuthGuardService } from './auth/auth-guard.service';
+import { TerritoryComponent } from './territory/territory.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    CallbackComponent
+    CallbackComponent,
+    TerritoryComponent
   ],
   imports: [
     BrowserModule,

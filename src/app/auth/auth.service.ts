@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import 'rxjs/add/operator/filter';
 import * as auth0 from 'auth0-js';
 
 @Injectable()
@@ -15,7 +14,7 @@ export class AuthService {
     domain: 'territories.auth0.com',
     responseType: 'token id_token',
     audience: 'https://territories.auth0.com/userinfo',
-    redirectUri: 'http://localhost/callback',
+    redirectUri: 'https://jw-maps.com/callback',
     scope: this.requestedScopes
   });
 
@@ -30,17 +29,21 @@ export class AuthService {
       if (authResult && authResult.accessToken && authResult.idToken) {
         window.location.hash = '';
         this.setSession(authResult);
-        this.router.navigate(['/home']);
       } else if (err) {
-        this.router.navigate(['/home']);
         console.log(err);
+      }
+
+      const referToUrl = localStorage.getItem('referTo');
+      if (referToUrl) {
+        localStorage.removeItem('referTo');
+        this.router.navigateByUrl(referToUrl);
       }
     });
   }
 
   private setSession(authResult): void {
-    const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-    const scopes = authResult.scope || this.requestedScopes || '';
+    const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime()),
+          scopes = authResult.scope || this.requestedScopes || '';
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
@@ -74,10 +77,9 @@ export class AuthService {
       throw new Error('Access Token must exist to fetch profile');
     }
 
-    const self = this;
     this.auth0.client.userInfo(accessToken, (err, profile) => {
       if (profile) {
-        self.userProfile = profile;
+        this.userProfile = profile;
       }
       cb(err, profile);
     });

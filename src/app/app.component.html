@@ -5,19 +5,25 @@
 
       <button
         class="btn btn-primary btn-margin"
-        routerLink="/">
+        routerLink="/home">
           Home
       </button>
 
       <button
         class="btn btn-primary btn-margin"
+        routerLink="/territory/10">
+          Territory 10
+      </button>
+
+      <button
+        class="btn btn-primary btn-margin navbar-right"
         *ngIf="!auth.isAuthenticated()"
         (click)="auth.login()">
           Log In
       </button>
 
       <button
-        class="btn btn-primary btn-margin"
+        class="btn btn-primary btn-margin navbar-right"
         *ngIf="auth.isAuthenticated()"
         (click)="auth.logout()">
           Log Out
