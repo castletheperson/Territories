@@ -7,13 +7,13 @@ export class AuthService {
 
   userProfile: any;
 
-  requestedScopes = 'openid profile';
+  requestedScopes = 'openid profile read:territories';
 
   auth0 = new auth0.WebAuth({
     clientID: 'RUSXtkkcj0yH1218MEfiFc5wTmVpninA',
     domain: 'territories.auth0.com',
     responseType: 'token id_token',
-    audience: 'https://territories.auth0.com/userinfo',
+    audience: 'https://jw-maps.com/api',
     redirectUri: 'https://jw-maps.com/callback',
     scope: this.requestedScopes
   });
