@@ -3,7 +3,7 @@ module Main where
 
 import Data.Maybe
 import GHC.Generics
-import Control.Monad.IO.Class
+--import Control.Monad.IO.Class
 import Snap.Core hiding (pass)
 import Snap.Http.Server
 import Data.Text (Text)
@@ -26,7 +26,7 @@ main = quickHttpServe site
 site :: Snap ()
 site = do
     modifyResponse (setContentType "application/json")
-    let users = [User "4castle" "Castle" "Kerr", User "aikman" "Aikman" "Ewalt"]
+    let users = [User "4castle" "Castle" "Kerr", User "aikman" "Aikman" "Ewalt", User "namzug_naitsirk" "Kristian" "Guzman"]
     --users <- liftIO getUsers
     writeLBS (encode users)
 
