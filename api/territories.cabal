@@ -25,6 +25,7 @@ Executable territories
     text,
     aeson,
     configurator,
+    transformers,
     jose
 
   if impl(ghc >= 6.12.0)
