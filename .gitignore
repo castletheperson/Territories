@@ -20,6 +20,16 @@
 *.sublime-workspace
 *.log
 
+# IDE - Netbeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+nbactions.xml
+nb-configuration.xml
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
