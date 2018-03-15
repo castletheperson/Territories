@@ -1,4 +1,4 @@
-Name:                api
+Name:                territories
 Version:             0.1
 Synopsis:            Territories API
 Description:         Serves to http://localhost:8000 and http://localhost/api
@@ -10,7 +10,7 @@ Category:            Web
 Build-type:          Simple
 Cabal-version:       >=1.2
 
-Executable api
+Executable territories
   hs-source-dirs: src
   main-is: Main.hs
 
