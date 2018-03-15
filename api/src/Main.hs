@@ -28,7 +28,7 @@ site = do
     modifyResponse (setContentType "application/json")
     let users = [User "4castle" "Castle" "Kerr", User "aikman" "Aikman" "Ewalt"]
     --users <- liftIO getUsers
-    mapM_ (writeLBS . encode) users
+    writeLBS (encode users)
 
 getUsers :: IO [User]
 getUsers = do
