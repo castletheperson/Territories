@@ -26,7 +26,7 @@ main = quickHttpServe site
 site :: Snap ()
 site = do
     modifyResponse (setContentType "application/json")
-    let users = [User "4castle" "Castle" "Kerr", User "aikman" "Aikman" "Ewalt", User "namzug_naitsirk" "Kristian" "Guzman"]
+    let users = [User "4castle" "Castle" "Kerr"]
     --users <- liftIO getUsers
     writeLBS (encode users)
 
