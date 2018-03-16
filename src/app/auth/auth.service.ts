@@ -5,8 +5,6 @@ import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/timer';
 
-import { Location } from '@angular/common';
-
 @Injectable()
 export class AuthService {
 
@@ -24,7 +22,7 @@ export class AuthService {
     scope: this.requestedScopes
   });
 
-  constructor(public router: Router, public loc: Location) {}
+  constructor(public router: Router) {}
 
   public login(): void {
     this.auth0.authorize();
