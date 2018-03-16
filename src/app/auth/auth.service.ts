@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/timer';
 
+import { Location } from '@angular/common';
+
 @Injectable()
 export class AuthService {
 
@@ -18,11 +20,11 @@ export class AuthService {
     domain: 'territories.auth0.com',
     responseType: 'token id_token',
     audience: 'https://jw-maps.com/api',
-    redirectUri: 'https://jw-maps.com/callback',
+    redirectUri: location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/callback',
     scope: this.requestedScopes
   });
 
-  constructor(public router: Router) {}
+  constructor(public router: Router, public loc: Location) {}
 
   public login(): void {
     this.auth0.authorize();
