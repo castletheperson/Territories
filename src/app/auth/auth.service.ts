@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import * as auth0 from 'auth0-js';
+import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/timer';
 
 @Injectable()
 export class AuthService {
 
   userProfile: any;
+  refreshSubscription: Subscription;
 
   requestedScopes = 'openid profile read:territories';
 
@@ -30,7 +34,7 @@ export class AuthService {
         window.location.hash = '';
         this.setSession(authResult);
       } else if (err) {
-        console.log(err);
+        console.error(err);
       }
 
       const referToUrl = localStorage.getItem('referTo');
@@ -41,13 +45,53 @@ export class AuthService {
     });
   }
 
+  public renewToken() {
+    this.auth0.checkSession({}, (err, result) => {
+      if (err) {
+        console.error(err);
+      } else {
+        this.setSession(result);
+      }
+    });
+  }
+
+  public scheduleRenewal() {
+    if (!this.isAuthenticated()) { return; }
+    this.unscheduleRenewal();
+
+    const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+
+    // Use timer to track delay until expiration
+    // to run the refresh at the proper time
+    const expiresIn$ = Observable.timer(Math.max(1, expiresAt - Date.now()));
+
+    // Once the delay time from above is
+    // reached, get a new JWT and schedule
+    // additional refreshes
+    this.refreshSubscription = expiresIn$.subscribe(
+      () => {
+        this.renewToken();
+        this.scheduleRenewal();
+      }
+    );
+  }
+
+  public unscheduleRenewal() {
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
+  }
+
   private setSession(authResult): void {
-    const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime()),
-          scopes = authResult.scope || this.requestedScopes || '';
+    const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
+    const scopes = authResult.scope || this.requestedScopes || '';
+
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
     localStorage.setItem('scopes', JSON.stringify(scopes));
+
+    this.scheduleRenewal();
   }
 
   public userHasScopes(scopes: Array<string>): boolean {
@@ -60,6 +104,7 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
+    this.unscheduleRenewal();
     // Go back to the home route
     this.router.navigate(['/']);
   }
@@ -71,8 +116,12 @@ export class AuthService {
     return new Date().getTime() < expiresAt;
   }
 
+  public getToken(): string {
+    return localStorage.getItem('access_token');
+  }
+
   public getProfile(cb): void {
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken = this.getToken();
     if (!accessToken) {
       throw new Error('Access Token must exist to fetch profile');
     }
