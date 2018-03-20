@@ -21,7 +21,10 @@ data User = User
 instance ToJSON User where
 
 main :: IO ()
-main = quickHttpServe site
+main = quickHttpServe $
+    ifTop site <|>
+    route [ ("foo", writeBS "bar")
+          ]
 
 site :: Snap ()
 site = do
