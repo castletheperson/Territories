@@ -2,6 +2,7 @@
 module Main where
 
 import Data.Maybe
+import Control.Applicative
 import GHC.Generics
 --import Control.Monad.IO.Class
 import Snap.Core hiding (pass)
