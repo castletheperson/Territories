@@ -1,15 +1,21 @@
 {-# LANGUAGE OverloadedStrings, DeriveGeneric #-}
+
 module Main where
 
 import Data.Maybe
-import Control.Applicative
-import GHC.Generics
---import Control.Monad.IO.Class
-import Snap.Core hiding (pass)
-import Snap.Http.Server
-import Data.Text (Text)
+import Control.Applicative hiding (empty)
+import Control.Monad.IO.Class (liftIO)
+
+import Snap.Core
+import Snap.Http.Server hiding (Config)
+
 import Data.Aeson
---import Data.Configurator
+import GHC.Generics
+import Data.Text (Text)
+
+import Data.Configurator
+import Data.Configurator.Types (Config)
+
 import Database.MySQL.Base
 import System.IO.Streams (toList)
 
@@ -22,27 +28,36 @@ data User = User
 instance ToJSON User where
 
 main :: IO ()
-main = quickHttpServe $
-    ifTop site <|>
-    route [ ("foo", writeBS "bar")
-          ]
+main = do
+    (config, _) <- autoReload autoConfig [Optional "db/connection.cfg"]
+    quickHttpServe $ ifTop pass <|>
+        route [ ("users", users config)
+              ]
 
-site :: Snap ()
-site = do
-    modifyResponse (setContentType "application/json")
-    let users = [User "4castle" "Castle" "Kerr"]
-    --users <- liftIO getUsers
+users :: Config -> Snap ()
+users config = do
+    users <- liftIO $ getUsers config
+    modifyResponse $ setContentType "application/json"
     writeLBS (encode users)
 
-getUsers :: IO [User]
-getUsers = do
-    --config <- load [Required "database.cfg"]
-    --dbUser <- require config "user"
-    --dbPass <- require config "password"
-    let dbUser = "root"
-    let dbPass = "test"
-    conn <- connect defaultConnectInfo { ciUser = dbUser, ciPassword = dbPass, ciDatabase = "territories" }
-    (_, resultStream) <- query_ conn "SELECT username, firstName, lastName FROM user"
+getDBConnection :: Config -> IO MySQLConn
+getDBConnection config = do
+    dbHost <- lookupDefault "localhost" config "host"
+    dbPort <- lookupDefault 3306 config "port"
+    dbUser <- lookupDefault "root" config "user"
+    dbPass <- lookupDefault "" config "password"
+    connect defaultConnectInfoMB4
+        { ciHost = dbHost
+        , ciPort = fromInteger dbPort
+        , ciUser = dbUser
+        , ciPassword = dbPass
+        , ciDatabase = "territories"
+        }
+
+getUsers :: Config -> IO [User]
+getUsers config = do
+    conn <- getDBConnection config
+    (_, resultStream) <- query_ conn "SELECT username, fname, lname FROM users"
     users <- catMaybes . map toUser <$> toList resultStream
     close conn
     return users
