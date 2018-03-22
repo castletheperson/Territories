@@ -7,3 +7,6 @@ CREATE TABLE `territories`.`users` (
   `lname` VARCHAR(255) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC));
+
+INSERT INTO `territories`.`users` (`username`, `fname`, `lname`)
+  VALUES ('4castle', 'Castle', 'Kerr');
