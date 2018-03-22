@@ -13,5 +13,4 @@ CREATE TABLE `users` (
   UNIQUE INDEX `username_UNIQUE` (`username` ASC));
 
 INSERT INTO `users` (`username`, `fname`, `lname`)
-  VALUES ('4castle', 'Castle', 'Kerr'),
-         ('aikman', 'Aikman', 'Ewalt');
+  VALUES ('4castle', 'Castle', 'Kerr');

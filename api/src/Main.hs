@@ -31,11 +31,11 @@ main :: IO ()
 main = do
     config <- fst <$> autoReload autoConfig ["db/connection.cfg"]
     quickHttpServe $ ifTop pass <|>
-        route [ ("users", users config)
+        route [ ("users", viewUsers config)
               ]
 
-users :: Config -> Snap ()
-users config = do
+viewUsers :: Config -> Snap ()
+viewUsers config = do
     users <- liftIO $ getUsers config
     modifyResponse $ setContentType "application/json"
     writeLBS (encode users)
