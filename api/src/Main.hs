@@ -29,7 +29,7 @@ instance ToJSON User where
 
 main :: IO ()
 main = do
-    (config, _) <- autoReload autoConfig [Optional "db/connection.cfg"]
+    config <- fst <$> autoReload autoConfig ["db/connection.cfg"]
     quickHttpServe $ ifTop pass <|>
         route [ ("users", users config)
               ]
