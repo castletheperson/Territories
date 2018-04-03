@@ -1,7 +1,7 @@
 Name:                territories
 Version:             0.1
 Synopsis:            Territories API
-Description:         Serves to http://localhost:8000 and http://localhost/api
+Description:         Serves to http://localhost:8000
 License:             AllRightsReserved
 Author:              Castle Kerr
 Maintainer:          castlekerr@hotmail.com

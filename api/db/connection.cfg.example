@@ -1,4 +1,12 @@
-host = "localhost"
-port = 3306
-user = "root"
-password = ""
+db {
+    host = "localhost"
+    port = 3306
+    user = "root"
+    password = ""
+    schema = "territories"
+}
+
+auth {
+    jwks = "https://example.auth0.com/.well-known/jwks.json"
+    audience = "https://example.com/api"
+}
