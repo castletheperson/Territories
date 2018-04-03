@@ -16,7 +16,7 @@ type App a = ReaderT Config Snap a
 
 serveApp :: App () -> IO ()
 serveApp app = do
-    config <- fst <$> autoReload autoConfig ["db/connection.cfg"]
+    config <- fst <$> autoReload autoConfig ["app.cfg"]
     quickHttpServe . flip runReaderT config $ app
 
 configured :: (MonadReader Config m, MonadIO m, Configured a) => Name -> m a

@@ -56,4 +56,4 @@ Thumbs.db
 /nbproject/private/
 
 # Secrets
-connection.cfg
+app.cfg
