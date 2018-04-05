@@ -1,4 +1,8 @@
 .avatar {
     border-radius: 50%;
-    height: 30px;
+    margin-top: -0.5rem;
+    margin-bottom: -0.5em;
+    height: 2.5rem;
+    width: 2.5rem;
+    vertical-align: top;
 }

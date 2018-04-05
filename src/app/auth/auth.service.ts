@@ -3,12 +3,14 @@ import { Router } from '@angular/router';
 import * as auth0 from 'auth0-js';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/bindNodeCallback';
+import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/timer';
 
 @Injectable()
 export class AuthService {
 
-  userProfile: any;
+  userProfile: { sub, nickname, name, picture, updated_at };
   refreshSubscription: Subscription;
 
   requestedScopes = 'openid profile read:territories';
@@ -28,7 +30,7 @@ export class AuthService {
     this.auth0.authorize();
   }
 
-  public handleAuthentication(): void {
+  public handleAuthentication(cb: () => void): void {
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
         window.location.hash = '';
@@ -36,12 +38,7 @@ export class AuthService {
       } else if (err) {
         console.error(err);
       }
-
-      const referToUrl = localStorage.getItem('referTo');
-      if (referToUrl) {
-        localStorage.removeItem('referTo');
-        this.router.navigateByUrl(referToUrl);
-      }
+      cb();
     });
   }
 
@@ -68,12 +65,10 @@ export class AuthService {
     // Once the delay time from above is
     // reached, get a new JWT and schedule
     // additional refreshes
-    this.refreshSubscription = expiresIn$.subscribe(
-      () => {
+    this.refreshSubscription = expiresIn$.subscribe(() => {
         this.renewToken();
         this.scheduleRenewal();
-      }
-    );
+    });
   }
 
   public unscheduleRenewal() {
@@ -91,6 +86,7 @@ export class AuthService {
     localStorage.setItem('expires_at', expiresAt);
     localStorage.setItem('scopes', JSON.stringify(scopes));
 
+    this.getProfile();
     this.scheduleRenewal();
   }
 
@@ -116,21 +112,27 @@ export class AuthService {
     return new Date().getTime() < expiresAt;
   }
 
-  public getToken(): string {
+  public getAccessToken(): string {
     return localStorage.getItem('access_token');
   }
 
-  public getProfile(cb): void {
-    const accessToken = this.getToken();
+  public getProfile(cb?): void {
+    const accessToken = this.getAccessToken();
     if (!accessToken) {
-      throw new Error('Access Token must exist to fetch profile');
+      return;
+    }
+
+    if (this.isAuthenticated() && this.userProfile && cb) {
+      cb(null, this.userProfile);
     }
 
     this.auth0.client.userInfo(accessToken, (err, profile) => {
       if (profile) {
         this.userProfile = profile;
       }
-      cb(err, profile);
+      if (cb) {
+        cb(err, profile);
+      }
     });
   }
 
