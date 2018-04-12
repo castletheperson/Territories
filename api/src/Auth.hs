@@ -11,7 +11,6 @@ import Crypto.JWT
 import Control.Lens
 import Control.Monad.Reader
 import Control.Monad.Except (runExceptT)
-import Control.Monad.IO.Class (liftIO)
 import Data.Aeson (FromJSON(parseJSON))
 import Data.Aeson.Lens (key, values, _String)
 import Data.Configurator.Types (Config)

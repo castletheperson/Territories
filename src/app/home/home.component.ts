@@ -14,7 +14,9 @@ export class HomeComponent implements OnInit {
   constructor(public http: HttpClient) { }
 
   ngOnInit() {
-    this.http.get('/api/territories');
+    this.http.get('/api/territories').subscribe((territories) => {
+      this.territories = territories;
+    });
   }
 
   newTerritory() {

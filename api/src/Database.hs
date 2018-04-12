@@ -5,9 +5,7 @@ module Database (getTerritories, getTerritoryByName, getUserByName) where
 import Types
 
 import Control.Monad.Reader
-import Control.Monad.IO.Class
 import Data.Maybe (catMaybes)
-import Data.Configurator
 import Data.Configurator.Types (Config)
 import Database.MySQL.Base
 import qualified System.IO.Streams as Streams
