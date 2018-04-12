@@ -1,13 +1,15 @@
-<div class="panel panel-default profile-area">
-  <div class="panel-heading">
-    <h3>Profile Test</h3>
+<div class="sidebar bg-light p-4">
+  <div class="sidebar-header">
+    <h3 class="d-inline-block">Your Territories</h3>
+    <button type="button" class="btn btn-outline-primary float-right"
+      (click)="newTerritory()" aria-label="Add New Territory">
+      <span class="fa fa-plus" aria-hidden="true"></span>
+    </button>
   </div>
-  <div class="panel-body">
-    <img src="{{profile?.picture}}" class="avatar" alt="avatar">
-    <div>
-      <label><i class="glyphicon glyphicon-user"></i> Nickname</label>
-      <h3 class="nickname">{{ profile?.nickname }}</h3>
-    </div>
-    <pre class="full-profile">{{ profile | json }}</pre>
-  </div>
+  <hr />
+  <nav class="nav flex-column">
+    <a class="nav-link" *ngFor="let territory of territories">
+      {{ territory | json }}
+    </a>
+  </nav>
 </div>

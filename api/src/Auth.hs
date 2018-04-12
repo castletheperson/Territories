@@ -3,6 +3,7 @@
 module Auth (withAuth) where
 
 import Types
+import Database (getUserByName)
 
 import Snap.Core
 import Network.Wreq
@@ -48,7 +49,7 @@ withAuth action = do
 
     case claimsOrError of
         Right claims -> case claims ^? claimSub . _Just . string . packed of
-            Just uid -> action (User { userId = uid })
+            Just uName -> getUserByName uName >>= action
             Nothing -> reject 400 "Bad Request" "No user id was provided"
         Left err -> reject 401 "Unauthorized" (show (err :: JWTError))
 
