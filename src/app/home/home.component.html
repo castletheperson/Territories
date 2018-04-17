@@ -1,15 +1,18 @@
-<div class="sidebar bg-light p-4">
-  <div class="sidebar-header">
-    <h3 class="d-inline-block">Your Territories</h3>
-    <button type="button" class="btn btn-outline-primary float-right"
-      (click)="newTerritory()" aria-label="Add New Territory">
-      <span class="fa fa-plus" aria-hidden="true"></span>
-    </button>
+<div class="row no-gutters">
+  <div class="sidebar col col-lg-4 col-xl-3 bg-light p-4 h-100">
+    <div class="sidebar-header">
+      <h3 class="d-inline-block">Your Territories</h3>
+      <button type="button" class="btn btn-outline-primary float-right"
+        (click)="newTerritory()" aria-label="Add New Territory">
+        <span class="fa fa-plus" aria-hidden="true"></span>
+      </button>
+    </div>
+    <hr />
+    <nav class="nav flex-column">
+      <a class="nav-link" *ngFor="let territory of territories">
+        {{ territory.name }}
+      </a>
+    </nav>
   </div>
-  <hr />
-  <nav class="nav flex-column">
-    <a class="nav-link" *ngFor="let territory of territories">
-      {{ territory | json }}
-    </a>
-  </nav>
+  <div id="map" class="col d-none d-lg-block h-100"></div>
 </div>
