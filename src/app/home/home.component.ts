@@ -13,7 +13,7 @@ import Modify from 'ol/interaction/modify';
 import Style from 'ol/style/style';
 import Stroke from 'ol/style/stroke';
 import controls from 'ol/control';
-import Control from 'ol/control/Control';
+import Control from 'ol/control/control';
 import vector from 'ol/layer/vector';
 
 @Component({
