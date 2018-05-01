@@ -1,6 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+
+import { AngularOpenlayersModule } from 'ngx-openlayers';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -10,7 +13,6 @@ import { CallbackComponent } from './callback/callback.component';
 import { AuthGuardService } from './auth/auth-guard.service';
 import { TerritoryComponent } from './territory/territory.component';
 import { TokenInterceptor } from './auth/token.interceptor';
-
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { TokenInterceptor } from './auth/token.interceptor';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
+    AngularOpenlayersModule
   ],
   providers: [
     AuthService,

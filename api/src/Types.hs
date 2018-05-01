@@ -6,12 +6,14 @@ import Snap.Core
 import Snap.Http.Server (quickHttpServe)
 import Control.Monad.Reader
 import Data.Aeson
+import Data.Aeson.Types (defaultOptions)
 import GHC.Generics
 import Data.Text (Text)
 import Data.Configurator
 import Data.Configurator.Types
 import Data.Time.LocalTime
 import Data.Int (Int32)
+import Data.Char
 
 type App a = ReaderT Config Snap a
 
@@ -43,5 +45,12 @@ data Territory = Territory
     , terrUpdated :: LocalTime
     } deriving (Generic, Show)
 
-instance FromJSON Territory
-instance ToJSON Territory
+instance FromJSON Territory where
+    parseJSON = genericParseJSON defaultOptions
+        { fieldLabelModifier = \(x:xs) -> "terr" ++ toUpper x : xs
+        }
+
+instance ToJSON Territory where
+    toJSON = genericToJSON defaultOptions
+        { fieldLabelModifier = \(_:_:_:_:x:xs) -> toLower x : xs
+        }

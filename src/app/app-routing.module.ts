@@ -9,7 +9,7 @@ import { AuthGuardService as AuthGuard } from './auth/auth-guard.service';
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'territory/:id', component: TerritoryComponent, canActivate: [AuthGuard] },
+  { path: 'territory/:name', component: TerritoryComponent, canActivate: [AuthGuard] },
   { path: 'callback', component: CallbackComponent }
 ];
 

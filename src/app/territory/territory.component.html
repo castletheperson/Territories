@@ -1,3 +1,71 @@
-<p>
-  Territory #{{ id }}
-</p>
+<div class="row no-gutters">
+  <div class="sidebar col col-lg-4 col-xl-3 bg-light p-4 h-100">
+    <div class="sidebar-header">
+      <a class="d-inline-block"><span class="fa fa-chevron-left"></span></a>
+      <h3 class="d-inline-block">{{ isNew ? 'New Territory' : territory.name }}</h3>
+    </div>
+    <hr />
+    <form (ngSubmit)="onSave()" #territoryForm="ngForm">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" required
+                [(ngModel)]="territory.name" name="name" #name="ngModel">
+        <div [hidden]="name.valid || name.pristine" class="alert alert-danger">
+          Name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="instructions">Instructions</label>
+        <textarea class="form-control" id="instructions"
+                [(ngModel)]="territory.instructions" name="instructions"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-success" [disabled]="!territoryForm.form.valid">Save</button>
+    </form>
+  </div>
+  <div id="map" class="col d-none d-lg-block h-100" tabindex="0" (keydown.control.z)="undoPoint()">
+    <aol-map #map>
+      <aol-view [zoom]="2" [enableRotation]="false">
+        <aol-coordinate [x]="0" [y]="0"></aol-coordinate>
+      </aol-view>
+
+      <aol-layer-tile>
+        <aol-source-osm></aol-source-osm>
+      </aol-layer-tile>
+
+      <aol-layer-vector>
+        <aol-source-vector #vector></aol-source-vector>
+        <aol-style>
+          <aol-style-stroke [color]="'#007BFF'" [width]="5"></aol-style-stroke>
+        </aol-style>
+      </aol-layer-vector>
+
+      <aol-interaction-default></aol-interaction-default>
+      <aol-interaction-draw #draw [source]="vector.instance" [type]="'Polygon'"
+        (onDrawStart)="setUndoActive(true); setFeature($event.feature)"
+        (onDrawEnd)="setUndoActive(false)">
+      </aol-interaction-draw>
+
+      <aol-control-defaults [attribution]="false"></aol-control-defaults>
+      <aol-control>
+        <aol-content>
+          <div class="ol-control ol-unselectable delete-control">
+            <button title="Delete All Points" (click)="deletePoints()">
+              <span class="fa fa-trash-o text-danger" aria-hidden="true"></span>
+            </button>
+          </div>
+        </aol-content>
+      </aol-control>
+      <aol-control *ngIf="undoActive">
+        <aol-content>
+          <div class="ol-control ol-unselectable undo-control">
+            <button title="Undo Last Point" (click)="undoPoint()">
+              <span class="fa fa-undo" aria-hidden="true"></span>
+            </button>
+          </div>
+        </aol-content>
+      </aol-control>
+    </aol-map>
+  </div>
+</div>

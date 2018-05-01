@@ -2,10 +2,11 @@
   <div class="sidebar col col-lg-4 col-xl-3 bg-light p-4 h-100">
     <div class="sidebar-header">
       <h3 class="d-inline-block">Your Territories</h3>
-      <button type="button" class="btn btn-outline-primary float-right"
-        (click)="newTerritory()" aria-label="Add New Territory">
+      <a href="/territory/new">
+      <button type="button" class="btn btn-outline-primary float-right" aria-label="Add New Territory">
         <span class="fa fa-plus" aria-hidden="true"></span>
       </button>
+      </a>
     </div>
     <hr />
     <nav class="nav flex-column">
@@ -14,5 +15,31 @@
       </a>
     </nav>
   </div>
-  <div id="map" class="col d-none d-lg-block h-100"></div>
+  <div id="map" class="col d-none d-lg-block h-100">
+    <aol-map>
+      <aol-view [zoom]="2" [enableRotation]="false">
+        <aol-coordinate [x]="0" [y]="0"></aol-coordinate>
+      </aol-view>
+
+      <aol-layer-tile>
+        <aol-source-osm></aol-source-osm>
+      </aol-layer-tile>
+
+      <aol-layer-vector>
+        <aol-source-vector>
+          <aol-feature *ngFor="let t of territories">
+            <aol-geometry-polygon>
+              <aol-collection-coordinates [coordinates]="t.points"></aol-collection-coordinates>
+            </aol-geometry-polygon>
+          </aol-feature>
+        </aol-source-vector>
+        <aol-style>
+          <aol-style-stroke [color]="'#007BFF'" [width]="5"></aol-style-stroke>
+        </aol-style>
+      </aol-layer-vector>
+
+      <aol-interaction-default></aol-interaction-default>
+      <aol-control-defaults [attribution]="false"></aol-control-defaults>
+    </aol-map>
+  </div>
 </div>
