@@ -28,7 +28,15 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
 
   isNew = false;
   undoActive = false;
-  territory: Territory;
+  territory: Territory = {
+    id: -1,
+    userId: -1,
+    name: '',
+    instructions: '',
+    boundary: [],
+    created: new Date().toISOString(),
+    updated: new Date().toISOString()
+  };
 
   constructor(private route: ActivatedRoute, private http: HttpClient) { }
 
@@ -36,18 +44,13 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
     const name = this.route.snapshot.paramMap.get('name');
     if (name === 'new') {
       this.isNew = true;
-      this.territory = {
-        id: -1,
-        userId: -1,
-        name: '',
-        instructions: '',
-        boundary: [],
-        created: new Date().toISOString(),
-        updated: new Date().toISOString()
-      };
     } else {
-      this.http.get(`/api/territory/${name}`).subscribe((territory: Territory) => {
+      this.http.get(`/api/territory/${name}`).subscribe((territory: any) => {
+        territory.boundary = JSON.parse(territory.boundary);
         this.territory = territory;
+        this.polygon = new ol.geom.Polygon([ territory.boundary ]);
+        this.vector.addFeature(new ol.Feature({ geometry: this.polygon }));
+        this.setPoints();
       });
     }
   }
@@ -66,10 +69,14 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
   onSave() {
     const territory = this.territory;
     territory.boundary = JSON.stringify(territory.boundary) as any;
-    this.http.post('/api/saveTerritory', JSON.stringify(this.territory), {
+
+    this.http.post('/api/saveTerritory', JSON.stringify(territory), {
       headers: { 'Content-Type': 'application/json' },
       responseType: 'text'
-    }).subscribe((val) => console.log(val));
+    }).toPromise()
+      .then((val) => { console.log(val); alert(val); })
+      .catch((reason) => { console.error(reason); });
+
     territory.boundary = JSON.parse(territory.boundary as any);
   }
 
@@ -104,7 +111,7 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
   setPoints() {
     const polygon = this.polygon || new ol.geom.Polygon([[]]);
     this.territory.boundary = polygon.getCoordinates()[0];
-    this.draw.setActive(false);
+    this.draw.setActive(this.territory.boundary.length === 0);
   }
 
 }
