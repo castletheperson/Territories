@@ -41,7 +41,7 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
         userId: -1,
         name: '',
         instructions: '',
-        points: [],
+        boundary: [],
         created: new Date().toISOString(),
         updated: new Date().toISOString()
       };
@@ -64,7 +64,13 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
   }
 
   onSave() {
-
+    const territory = this.territory;
+    territory.boundary = JSON.stringify(territory.boundary) as any;
+    this.http.post('/api/saveTerritory', JSON.stringify(this.territory), {
+      headers: { 'Content-Type': 'application/json' },
+      responseType: 'text'
+    }).subscribe((val) => console.log(val));
+    territory.boundary = JSON.parse(territory.boundary as any);
   }
 
   setFeature(feature: ol.Feature) {
@@ -86,7 +92,7 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
       this.draw.removeLastPoint();
       const coords = this.polygon.getCoordinates()[0];
       if (coords.length <= 2) {
-        this.undoActive = false;
+        this.setUndoActive(false);
       }
     }
   }
@@ -96,12 +102,9 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
   }
 
   setPoints() {
+    const polygon = this.polygon || new ol.geom.Polygon([[]]);
+    this.territory.boundary = polygon.getCoordinates()[0];
     this.draw.setActive(false);
-    if (this.polygon) {
-      this.territory.points = this.polygon.getCoordinates()[0];
-    } else {
-      this.territory.points = [];
-    }
   }
 
 }

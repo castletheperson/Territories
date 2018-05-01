@@ -3,7 +3,7 @@ export interface Territory {
   userId: number;
   name: string;
   instructions: string;
-  points: [number, number][];
+  boundary: [number, number][];
   created: string;
   updated: string;
 }

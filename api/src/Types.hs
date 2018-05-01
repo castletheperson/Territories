@@ -11,7 +11,7 @@ import GHC.Generics
 import Data.Text (Text)
 import Data.Configurator
 import Data.Configurator.Types
-import Data.Time.LocalTime
+import Data.Time.Clock
 import Data.Int (Int32)
 import Data.Char
 
@@ -40,14 +40,14 @@ data Territory = Territory
     , terrUserId :: Int32
     , terrName :: Text
     , terrInstructions :: Text
-    , terrPoints :: [(Double, Double)]
-    , terrCreated :: LocalTime
-    , terrUpdated :: LocalTime
+    , terrBoundary :: Text
+    , terrCreated :: UTCTime
+    , terrUpdated :: UTCTime
     } deriving (Generic, Show)
 
 instance FromJSON Territory where
     parseJSON = genericParseJSON defaultOptions
-        { fieldLabelModifier = \(x:xs) -> "terr" ++ toUpper x : xs
+        { fieldLabelModifier = \(_:_:_:_:x:xs) -> toLower x : xs
         }
 
 instance ToJSON Territory where

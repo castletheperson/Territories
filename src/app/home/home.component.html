@@ -29,7 +29,7 @@
         <aol-source-vector>
           <aol-feature *ngFor="let t of territories">
             <aol-geometry-polygon>
-              <aol-collection-coordinates [coordinates]="t.points"></aol-collection-coordinates>
+              <aol-collection-coordinates [coordinates]="t.boundary"></aol-collection-coordinates>
             </aol-geometry-polygon>
           </aol-feature>
         </aol-source-vector>

@@ -36,7 +36,7 @@ withAuth action = do
     authHeader <- getHeader "Authorization" <$> getRequest
     compactJWT <- case authHeader >>= stripPrefix "Bearer " of
         Just token -> return (fromStrict token)
-        Nothing -> reject 400 "Bad Request" "Missing authorization header"
+        Nothing -> reject 400 "Missing authorization header"
 
     jwksURL <- configured "auth.jwks"
     jwtAudience <- fromString <$> configured "auth.audience"
@@ -49,11 +49,11 @@ withAuth action = do
     case claimsOrError of
         Right claims -> case claims ^? claimSub . _Just . string . packed of
             Just uName -> getUserByName uName >>= action
-            Nothing -> reject 400 "Bad Request" "No user id was provided"
-        Left err -> reject 401 "Unauthorized" (show (err :: JWTError))
+            Nothing -> reject 400 "No user id was provided"
+        Left err -> reject 401 (show (err :: JWTError))
 
-reject :: (MonadSnap m) => Int -> ByteString -> String -> m a
-reject code status err = do
-    modifyResponse $ setResponseStatus code status
+reject :: (MonadSnap m) => Int -> String -> m a
+reject code err = do
+    modifyResponse $ setResponseCode code
     writeText (pack err)
     finishWith =<< getResponse
