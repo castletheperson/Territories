@@ -50,6 +50,7 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
         this.territory = territory;
         this.polygon = new ol.geom.Polygon([ territory.boundary ]);
         this.vector.addFeature(new ol.Feature({ geometry: this.polygon }));
+        this.map.getView().fit(this.polygon);
         this.setPoints();
       });
     }
