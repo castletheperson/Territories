@@ -42,7 +42,7 @@ export class AuthService {
     });
   }
 
-  public renewToken() {
+  public renewToken(): void {
     this.auth0.checkSession({}, (err, result) => {
       if (err) {
         console.error(err);
@@ -52,7 +52,7 @@ export class AuthService {
     });
   }
 
-  public scheduleRenewal() {
+  public scheduleRenewal(): void {
     if (!this.isAuthenticated()) { return; }
     this.unscheduleRenewal();
 
@@ -66,12 +66,12 @@ export class AuthService {
     // reached, get a new JWT and schedule
     // additional refreshes
     this.refreshSubscription = expiresIn$.subscribe(() => {
-        this.renewToken();
-        this.scheduleRenewal();
+      this.renewToken();
+      this.scheduleRenewal();
     });
   }
 
-  public unscheduleRenewal() {
+  public unscheduleRenewal(): void {
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
     }

@@ -1,9 +1,9 @@
 import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { Territory } from '../territory';
 import { SourceVectorComponent, DrawInteractionComponent, MapComponent } from 'ngx-openlayers';
 import * as ol from 'openlayers';
+import { TerritoryService } from './territory.service';
 
 @Component({
   selector: 'app-territory',
@@ -38,15 +38,14 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
     updated: new Date().toISOString()
   };
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) { }
+  constructor(private route: ActivatedRoute, private territories: TerritoryService) { }
 
   ngOnInit() {
     const name = this.route.snapshot.paramMap.get('name');
     if (name === 'new') {
       this.isNew = true;
     } else {
-      this.http.get(`/api/territory/${name}`).subscribe((territory: any) => {
-        territory.boundary = JSON.parse(territory.boundary);
+      this.territories.getByName(name).subscribe((territory: Territory) => {
         this.territory = territory;
         this.polygon = new ol.geom.Polygon([ territory.boundary ]);
         this.vector.addFeature(new ol.Feature({ geometry: this.polygon }));
@@ -68,17 +67,10 @@ export class TerritoryComponent implements OnInit, AfterViewInit {
   }
 
   onSave() {
-    const territory = this.territory;
-    territory.boundary = JSON.stringify(territory.boundary) as any;
-
-    this.http.post('/api/saveTerritory', JSON.stringify(territory), {
-      headers: { 'Content-Type': 'application/json' },
-      responseType: 'text'
-    }).toPromise()
-      .then((val) => { console.log(val); alert(val); })
-      .catch((reason) => { console.error(reason); });
-
-    territory.boundary = JSON.parse(territory.boundary as any);
+    this.territories.save(this.territory).subscribe(
+      (msg) => { console.log(msg); alert(msg); },
+      (err) => { console.error(err); }
+    );
   }
 
   setFeature(feature: ol.Feature) {

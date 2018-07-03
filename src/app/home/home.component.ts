@@ -1,29 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Territory } from '../territory';
+import { MapComponent, SourceVectorComponent } from 'ngx-openlayers';
+import { TerritoryService } from '../territory/territory.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(MapComponent)
+  mapComp: MapComponent;
+
+  @ViewChild(SourceVectorComponent)
+  vectorComp: SourceVectorComponent;
 
   territories: Territory[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private territoryService: TerritoryService) { }
 
   ngOnInit() {
-    this.http.get('/api/territories').subscribe((territories: any[]) => {
-      for (const terr of territories) {
-        terr.boundary = JSON.parse(terr.boundary);
-      }
+
+  }
+
+  ngAfterViewInit() {
+    this.territoryService.getAll().subscribe((territories: Territory[]) => {
       this.territories = territories;
+      this.zoomToFit();
     });
   }
 
-  newTerritory() {
-
+  zoomToFit() {
+    const map = this.mapComp.instance;
+    const features = this.vectorComp.instance.getFeatures();
+    console.log(features);
+    if (features.length > 0) {
+      const extent = features[0].getGeometry().getExtent();
+      features.forEach(feature => ol.extent.extend(extent, feature.getGeometry().getExtent()));
+      map.getView().fit(extent);
+    }
   }
 
 }

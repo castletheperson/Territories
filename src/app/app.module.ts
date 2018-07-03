@@ -13,6 +13,7 @@ import { CallbackComponent } from './callback/callback.component';
 import { AuthGuardService } from './auth/auth-guard.service';
 import { TerritoryComponent } from './territory/territory.component';
 import { TokenInterceptor } from './auth/token.interceptor';
+import { TerritoryService } from './territory/territory.service';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { TokenInterceptor } from './auth/token.interceptor';
     AngularOpenlayersModule
   ],
   providers: [
+    TerritoryService,
     AuthService,
     AuthGuardService, {
       provide: HTTP_INTERCEPTORS,
